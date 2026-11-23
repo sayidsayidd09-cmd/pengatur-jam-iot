@@ -1,0 +1,1346 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS | IoT Control Center</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap');
+
+:root {
+  --bg:#080d18;
+  --sidebar:#0c1423;
+  --panel:#101b2d;
+  --panel2:#121f33;
+  --line:rgba(148,180,220,.12);
+  --cyan:#55e6f2;
+  --purple:#9b7bff;
+  --green:#53e6a0;
+  --yellow:#ffc96b;
+  --red:#ff7185;
+  --text:#edf4ff;
+  --muted:#8293ad;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:
+    radial-gradient(ellipse at 75% 0%,rgba(78,105,190,.13),transparent 40%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,sans-serif;
+  min-height:100vh;
+}
+
+button,input,textarea,select { font:inherit; }
+
+button { cursor:pointer; }
+
+.app {
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width:245px;
+  flex-shrink:0;
+  background:rgba(12,20,35,.96);
+  border-right:1px solid var(--line);
+  padding:25px 18px;
+  display:flex;
+  flex-direction:column;
+}
+
+.brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:5px 8px 30px;
+}
+
+.brand-icon {
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  color:#07111e;
+  font-size:21px;
+  font-weight:800;
+  box-shadow:0 0 22px rgba(85,230,242,.2);
+}
+
+.brand h2 {
+  font-size:17px;
+  letter-spacing:2px;
+  margin:0;
+}
+
+.brand span {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-top:4px;
+  letter-spacing:2px;
+}
+
+.nav-title {
+  color:#586b87;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  padding:12px 12px;
+}
+
+.nav {
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.nav a {
+  text-decoration:none;
+  color:var(--muted);
+  padding:13px 14px;
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:13px;
+  transition:.2s;
+  border:1px solid transparent;
+}
+
+.nav a:hover,
+.nav a.active {
+  color:var(--cyan);
+  background:rgba(85,230,242,.08);
+  border-color:rgba(85,230,242,.13);
+}
+
+.nav-icon {
+  width:19px;
+  text-align:center;
+  font-size:16px;
+}
+
+.sidebar-bottom {
+  margin-top:auto;
+  padding:14px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  border-radius:14px;
+}
+
+.device-small {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.device-dot {
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+}
+
+.device-small strong {
+  font-size:11px;
+}
+
+.device-small p {
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:10px;
+}
+
+/* MAIN */
+
+.main {
+  flex:1;
+  min-width:0;
+  padding:27px 32px;
+}
+
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom:28px;
+}
+
+.page-title small {
+  color:var(--cyan);
+  font-size:10px;
+  letter-spacing:2px;
+  font-weight:700;
+}
+
+.page-title h1 {
+  margin:7px 0 0;
+  font-size:25px;
+  letter-spacing:-.7px;
+}
+
+.top-actions {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.live-status {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 13px;
+  border:1px solid rgba(83,230,160,.2);
+  background:rgba(83,230,160,.06);
+  border-radius:10px;
+  color:var(--green);
+  font-size:11px;
+  font-weight:700;
+}
+
+.live-dot {
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 10px var(--green);
+}
+
+.user-btn {
+  border:1px solid var(--line);
+  color:var(--text);
+  background:var(--panel);
+  padding:10px 15px;
+  border-radius:10px;
+  font-size:11px;
+}
+
+/* GENERAL CARD */
+
+.card {
+  background:linear-gradient(145deg,rgba(18,31,51,.96),rgba(12,21,36,.98));
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:21px;
+  min-width:0;
+  box-shadow:0 12px 35px rgba(0,0,0,.12);
+}
+
+.card-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:19px;
+}
+
+.card-heading h3 {
+  margin:0;
+  font-size:14px;
+  font-weight:700;
+}
+
+.card-heading span {
+  color:var(--muted);
+  font-size:10px;
+}
+
+.section-label {
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+
+/* OVERVIEW */
+
+.overview {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.metric {
+  position:relative;
+  overflow:hidden;
+}
+
+.metric::after {
+  content:"";
+  position:absolute;
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  right:-35px;
+  top:-40px;
+  background:rgba(85,230,242,.06);
+  filter:blur(4px);
+}
+
+.metric-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.metric-icon {
+  width:35px;
+  height:35px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:rgba(85,230,242,.1);
+  font-size:16px;
+}
+
+.metric-label {
+  font-size:11px;
+  color:var(--muted);
+  margin-top:17px;
+}
+
+.metric strong {
+  display:block;
+  margin-top:8px;
+  font-size:23px;
+  font-weight:800;
+}
+
+.metric small {
+  display:block;
+  color:var(--muted);
+  margin-top:6px;
+  font-size:10px;
+}
+
+/* MAIN GRID */
+
+.dashboard-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(0,1.4fr);
+  gap:18px;
+  align-items:start;
+}
+
+/* CLOCK */
+
+.clock-card {
+  background:
+    radial-gradient(circle at 85% 10%,rgba(85,230,242,.13),transparent 40%),
+    linear-gradient(145deg,#14263a,#0d1728);
+}
+
+.clock-card .section-label {
+  color:var(--cyan);
+}
+
+.clock-display {
+  text-align:center;
+  padding:22px 5px;
+  border-radius:14px;
+  border:1px solid rgba(85,230,242,.15);
+  background:rgba(5,12,22,.48);
+  margin-top:15px;
+}
+
+.clock-time {
+  font-family:Orbitron,sans-serif;
+  font-size:clamp(28px,4vw,43px);
+  font-weight:700;
+  color:var(--cyan);
+  letter-spacing:3px;
+  text-shadow:0 0 22px rgba(85,230,242,.35);
+}
+
+.clock-date {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:12px;
+}
+
+.timezone-badge {
+  display:inline-block;
+  margin-top:15px;
+  padding:6px 11px;
+  border-radius:20px;
+  color:var(--cyan);
+  background:rgba(85,230,242,.08);
+  font-size:10px;
+}
+
+/* SETTINGS */
+
+.settings {
+  margin-top:20px;
+}
+
+.form-group {
+  margin-bottom:17px;
+}
+
+.form-group label {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color:#bdcce0;
+  font-size:11px;
+  font-weight:600;
+  margin-bottom:9px;
+}
+
+.form-group label span {
+  color:var(--cyan);
+}
+
+input[type="text"],
+input[type="time"],
+select,
+textarea {
+  width:100%;
+  background:#0a1423;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px 13px;
+  outline:none;
+  font-size:12px;
+  transition:.2s;
+}
+
+input:focus,select:focus,textarea:focus {
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(85,230,242,.08);
+}
+
+textarea {
+  min-height:90px;
+  resize:vertical;
+  line-height:1.6;
+}
+
+input[type="range"] {
+  width:100%;
+  accent-color:var(--cyan);
+  cursor:pointer;
+}
+
+.two-columns {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.value-text {
+  color:var(--cyan);
+  font-size:11px;
+}
+
+.button-group {
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.btn {
+  border:0;
+  border-radius:10px;
+  padding:12px 17px;
+  font-size:11px;
+  font-weight:700;
+  transition:.2s;
+}
+
+.btn:hover {
+  transform:translateY(-2px);
+}
+
+.btn-primary {
+  color:#07131f;
+  background:linear-gradient(120deg,var(--cyan),#8d9dff);
+  box-shadow:0 5px 18px rgba(85,230,242,.12);
+}
+
+.btn-secondary {
+  color:#c6d2e5;
+  border:1px solid var(--line);
+  background:#17243a;
+}
+
+/* LED PREVIEW */
+
+.preview-card {
+  margin-bottom:18px;
+}
+
+.led-screen {
+  border:1px solid rgba(85,230,242,.3);
+  background:#03090e;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:inset 0 0 22px rgba(85,230,242,.05);
+}
+
+.led-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:11px 13px;
+  border-bottom:1px solid rgba(85,230,242,.12);
+}
+
+.led-top span {
+  font-size:9px;
+  color:var(--muted);
+  letter-spacing:1px;
+}
+
+.led-active {
+  color:var(--green)!important;
+}
+
+.led-content {
+  display:flex;
+  align-items:center;
+  min-height:105px;
+  padding:15px 0;
+}
+
+.led-time {
+  flex-shrink:0;
+  padding:0 17px;
+  font-family:Orbitron,sans-serif;
+  font-size:21px;
+  color:var(--cyan);
+  border-right:1px solid rgba(85,230,242,.2);
+}
+
+.marquee {
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+}
+
+.marquee-track {
+  display:flex;
+  width:max-content;
+  align-items:center;
+  white-space:nowrap;
+  animation:marquee 12s linear infinite;
+}
+
+.marquee-track span {
+  padding-right:55px;
+  font-size:17px;
+  font-weight:800;
+  color:var(--cyan);
+  text-shadow:0 0 12px currentColor;
+  letter-spacing:1px;
+}
+
+@keyframes marquee {
+  from { transform:translateX(0); }
+  to { transform:translateX(-50%); }
+}
+
+/* INFO */
+
+.info-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.info-item {
+  padding:15px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--line);
+  border-radius:12px;
+  min-width:0;
+}
+
+.info-item small {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:9px;
+}
+
+.info-item strong {
+  font-size:14px;
+  overflow-wrap:anywhere;
+}
+
+.info-item.wide {
+  grid-column:1/-1;
+}
+
+/* DEVICE */
+
+.device-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.device-item {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  border-radius:12px;
+  padding:14px;
+}
+
+.device-item small {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:9px;
+}
+
+.device-item strong {
+  font-size:12px;
+}
+
+.good { color:var(--green); }
+.cyan { color:var(--cyan); }
+.warn { color:var(--yellow); }
+
+/* AUTH */
+
+.auth-overlay {
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(3,7,14,.84);
+  backdrop-filter:blur(10px);
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
+.auth-overlay.hidden { display:none; }
+
+.auth-box {
+  width:min(390px,100%);
+  background:#101b2d;
+  border:1px solid rgba(85,230,242,.3);
+  border-radius:20px;
+  padding:27px;
+  box-shadow:0 20px 80px rgba(0,0,0,.5);
+}
+
+.auth-box h2 {
+  font-size:19px;
+  margin:0 0 8px;
+}
+
+.auth-box p {
+  color:var(--muted);
+  font-size:11px;
+  margin:0 0 23px;
+}
+
+.auth-box .form-group {
+  margin-bottom:15px;
+}
+
+.auth-box button {
+  width:100%;
+}
+
+.auth-error {
+  color:var(--red);
+  font-size:11px;
+  min-height:17px;
+  margin:5px 0 12px;
+}
+
+.main.locked {
+  filter:blur(3px);
+  pointer-events:none;
+  user-select:none;
+}
+
+/* FOOTER */
+
+.footer {
+  margin-top:24px;
+  padding-top:17px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color:#63758e;
+  font-size:10px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px) {
+  .sidebar { width:210px; }
+  .main { padding:24px 20px; }
+  .overview { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+@media(max-width:800px) {
+  .app { flex-direction:column; }
+
+  .sidebar {
+    width:100%;
+    padding:14px 17px;
+    border-right:0;
+    border-bottom:1px solid var(--line);
+  }
+
+  .brand { padding:0 5px 14px; }
+
+  .nav-title,.sidebar-bottom { display:none; }
+
+  .nav {
+    flex-direction:row;
+    overflow-x:auto;
+    padding-bottom:3px;
+  }
+
+  .nav a {
+    flex-shrink:0;
+    padding:10px 12px;
+    font-size:11px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:520px) {
+  .main { padding:20px 13px; }
+
+  .topbar {
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .top-actions { width:100%; justify-content:space-between; }
+
+  .page-title h1 { font-size:21px; }
+
+  .overview { gap:10px; }
+
+  .metric { padding:15px; }
+  .metric strong { font-size:20px; }
+
+  .card { padding:16px; }
+
+  .two-columns { grid-template-columns:1fr; }
+
+  .clock-time { font-size:29px; }
+
+  .led-content {
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .led-time {
+    text-align:center;
+    border-right:0;
+    border-bottom:1px solid rgba(85,230,242,.2);
+    padding:10px;
+  }
+
+  .marquee { padding:15px 0; }
+
+  .button-group { flex-direction:column; }
+
+  .button-group .btn { width:100%; }
+
+  .footer { flex-direction:column; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+  <div class="brand">
+    <div class="brand-icon">N</div>
+    <div>
+      <h2>NEXUS</h2>
+      <span>IoT CONTROL SYSTEM</span>
+    </div>
+  </div>
+
+  <div class="nav-title">MAIN MENU</div>
+
+  <nav class="nav">
+    <a href="#overview" class="active"><span class="nav-icon">◈</span> Dashboard</a>
+    <a href="#clockSection"><span class="nav-icon">◷</span> Jam Digital</a>
+    <a href="#settingsSection"><span class="nav-icon">⚙</span> Pengaturan</a>
+    <a href="#previewSection"><span class="nav-icon">▤</span> Running Text</a>
+    <a href="#deviceSection"><span class="nav-icon">▣</span> Perangkat</a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="device-small">
+      <span class="device-dot"></span>
+      <div>
+        <strong>System Active</strong>
+        <p>Dashboard Version 2.0</p>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="mainContent">
+
+  <header class="topbar">
+    <div class="page-title">
+      <small>CONTROL CENTER / OVERVIEW</small>
+      <h1>Dashboard IoT</h1>
+    </div>
+
+    <div class="top-actions">
+      <div class="live-status">
+        <span class="live-dot"></span>
+        SYSTEM ACTIVE
+      </div>
+      <button class="user-btn" id="logoutBtn">Logout ↗</button>
+    </div>
+  </header>
+
+  <!-- OVERVIEW -->
+  <section class="overview" id="overview">
+
+    <div class="card metric">
+      <div class="metric-top">
+        <span class="section-label">Jam Digital</span>
+        <div class="metric-icon">◷</div>
+      </div>
+      <div class="metric-label">Waktu Sekarang</div>
+      <strong id="metricClock">00:00:00</strong>
+      <small>Realtime clock</small>
+    </div>
+
+    <div class="card metric">
+      <div class="metric-top">
+        <span class="section-label">Kecerahan</span>
+        <div class="metric-icon">☼</div>
+      </div>
+      <div class="metric-label">Display brightness</div>
+      <strong id="metricBrightness">75%</strong>
+      <small>LED display level</small>
+    </div>
+
+    <div class="card metric">
+      <div class="metric-top">
+        <span class="section-label">Kecepatan</span>
+        <div class="metric-icon">➤</div>
+      </div>
+      <div class="metric-label">Running text</div>
+      <strong id="metricSpeed">18s</strong>
+      <small>Animation duration</small>
+    </div>
+
+    <div class="card metric">
+      <div class="metric-top">
+        <span class="section-label">Status</span>
+        <div class="metric-icon">◉</div>
+      </div>
+      <div class="metric-label">Dashboard status</div>
+      <strong class="good" style="font-size:20px">ACTIVE</strong>
+      <small>Local interface active</small>
+    </div>
+
+  </section>
+
+  <!-- CONTENT -->
+  <section class="dashboard-grid">
+
+    <!-- LEFT -->
+    <div>
+
+      <div class="card clock-card" id="clockSection">
+
+        <div class="card-heading">
+          <h3>◷ Jam Digital</h3>
+          <span>LIVE CLOCK</span>
+        </div>
+
+        <div class="clock-display">
+          <div class="clock-time" id="clock">00:00:00</div>
+          <div class="clock-date" id="date">Memuat tanggal...</div>
+          <div class="timezone-badge" id="timezoneBadge">WITA • UTC+8</div>
+        </div>
+
+        <div class="settings" id="settingsSection">
+
+          <div class="card-heading" style="margin-top:22px">
+            <h3>⚙ Pengaturan Display</h3>
+            <span>CONTROL PANEL</span>
+          </div>
+
+          <form id="settingsForm">
+
+            <div class="two-columns">
+
+              <div class="form-group">
+                <label>Target Waktu</label>
+                <input type="time" id="targetTime" value="15:30">
+              </div>
+
+              <div class="form-group">
+                <label>Zona Waktu</label>
+                <select id="timezone">
+                  <option value="Asia/Makassar">WITA</option>
+                  <option value="Asia/Jakarta">WIB</option>
+                  <option value="Asia/Jayapura">WIT</option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="form-group">
+              <label>
+                Kecepatan Running Text
+                <span id="speedLabel">18s</span>
+              </label>
+              <input type="range" id="speed" min="5" max="30" value="18">
+            </div>
+
+            <div class="form-group">
+              <label>
+                Kecerahan LED
+                <span id="brightnessLabel">75%</span>
+              </label>
+              <input type="range" id="brightness" min="20" max="100" value="75">
+            </div>
+
+            <div class="form-group">
+              <label>
+                Ketebalan Tulisan
+                <span id="weightLabel">800</span>
+              </label>
+              <input type="range" id="weight" min="300" max="900" step="100" value="800">
+            </div>
+
+            <div class="form-group">
+              <label>Warna LED</label>
+              <select id="ledColor">
+                <option value="#55e6f2">Cyan Neon</option>
+                <option value="#7effa9">Neon Green</option>
+                <option value="#ff6b9d">Neon Pink</option>
+                <option value="#b18cff">Neon Purple</option>
+                <option value="#ffe17a">Neon Yellow</option>
+                <option value="#ffffff">White</option>
+                <option value="#ff7777">Neon Red</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Pesan Running Text</label>
+              <textarea id="message">SIAGA 24 JAM • SISTEM MONITORING AKTIF</textarea>
+            </div>
+
+            <div class="button-group">
+              <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+              <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+
+      <div class="card preview-card" id="previewSection">
+
+        <div class="card-heading">
+          <h3>▤ LED Display Preview</h3>
+          <span>LIVE PREVIEW</span>
+        </div>
+
+        <div class="led-screen">
+
+          <div class="led-top">
+            <span>LED PANEL / MAIN DISPLAY</span>
+            <span class="led-active">● PREVIEW ACTIVE</span>
+          </div>
+
+          <div class="led-content">
+
+            <div class="led-time" id="tickerClock">15:30</div>
+
+            <div class="marquee">
+              <div class="marquee-track" id="tickerTrack">
+                <span>SIAGA 24 JAM • SISTEM MONITORING AKTIF</span>
+                <span>SIAGA 24 JAM • SISTEM MONITORING AKTIF</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="info-grid">
+
+          <div class="info-item">
+            <small>Target Waktu</small>
+            <strong class="cyan" id="targetOutput">15:30</strong>
+          </div>
+
+          <div class="info-item">
+            <small>Durasi Animasi</small>
+            <strong id="speedOutput">18s</strong>
+          </div>
+
+          <div class="info-item wide">
+            <small>Pesan Aktif</small>
+            <strong id="messageOutput">SIAGA 24 JAM</strong>
+          </div>
+
+          <div class="info-item">
+            <small>Ketebalan</small>
+            <strong id="weightOutput">800</strong>
+          </div>
+
+          <div class="info-item">
+            <small>Warna Display</small>
+            <strong class="cyan" id="colorOutput">CYAN NEON</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- DEVICE -->
+      <div class="card" id="deviceSection">
+
+        <div class="card-heading">
+          <h3>▣ Monitoring Perangkat</h3>
+          <span>DEVICE STATUS</span>
+        </div>
+
+        <div class="device-grid">
+
+          <div class="device-item">
+            <small>Database</small>
+            <strong class="warn">● Demo Mode</strong>
+          </div>
+
+          <div class="device-item">
+            <small>MQTT Broker</small>
+            <strong class="warn">● Not Connected</strong>
+          </div>
+
+          <div class="device-item">
+            <small>LED P10</small>
+            <strong class="warn">● Not Connected</strong>
+          </div>
+
+          <div class="device-item">
+            <small>Dashboard</small>
+            <strong class="good">● Running</strong>
+          </div>
+
+          <div class="device-item">
+            <small>Suhu Sensor</small>
+            <strong id="temperature">-- °C</strong>
+          </div>
+
+          <div class="device-item">
+            <small>Kelembapan</small>
+            <strong id="humidity">-- %</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <footer class="footer">
+    <span>NEXUS IoT CONTROL SYSTEM © 2026</span>
+    <span>INTERFACE VERSION 2.0.0</span>
+  </footer>
+
+</main>
+</div>
+
+<!-- LOGIN -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+
+    <div class="brand" style="padding:0 0 20px">
+      <div class="brand-icon">N</div>
+      <div>
+        <h2>NEXUS</h2>
+        <span>SECURE ACCESS</span>
+      </div>
+    </div>
+
+    <h2>Welcome Back</h2>
+    <p>Login untuk mengakses IoT Control Center.</p>
+
+    <form id="authForm">
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Masukkan username" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Masukkan password" required>
+      </div>
+
+      <div class="auth-error" id="authError"></div>
+
+      <button class="btn btn-primary" type="submit">LOGIN SYSTEM →</button>
+
+    </form>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const defaults = {
+  target:"15:30",
+  timezone:"Asia/Makassar",
+  speed:"18",
+  brightness:"75",
+  weight:"800",
+  color:"#55e6f2",
+  message:"SIAGA 24 JAM • SISTEM MONITORING AKTIF"
+};
+
+let loggedIn = false;
+
+function getSettings() {
+  return {
+    target:$("targetTime").value,
+    timezone:$("timezone").value,
+    speed:$("speed").value,
+    brightness:$("brightness").value,
+    weight:$("weight").value,
+    color:$("ledColor").value,
+    message:$("message").value.trim() || "SYSTEM ONLINE"
+  };
+}
+
+function applySettings(data) {
+  $("targetTime").value=data.target;
+  $("timezone").value=data.timezone;
+  $("speed").value=data.speed;
+  $("brightness").value=data.brightness;
+  $("weight").value=data.weight;
+  $("ledColor").value=data.color;
+  $("message").value=data.message;
+
+  updateSettings();
+}
+
+function updateClock() {
+  const zone=$("timezone").value;
+  const now=new Date();
+
+  const time=new Intl.DateTimeFormat("id-ID",{
+    timeZone:zone,
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit",
+    hourCycle:"h23"
+  }).format(now);
+
+  const date=new Intl.DateTimeFormat("id-ID",{
+    timeZone:zone,
+    weekday:"long",
+    day:"numeric",
+    month:"long",
+    year:"numeric"
+  }).format(now);
+
+  $("clock").textContent=time;
+  $("metricClock").textContent=time;
+  $("date").textContent=date;
+  $("timezoneBadge").textContent =
+    zone==="Asia/Jakarta" ? "WIB • UTC+7" :
+    zone==="Asia/Makassar" ? "WITA • UTC+8" :
+    "WIT • UTC+9";
+
+  $("tickerClock").textContent=time;
+}
+
+function updateSettings() {
+  const data=getSettings();
+
+  const speed=Number(data.speed);
+  const brightness=Number(data.brightness);
+  const weight=Number(data.weight);
+
+  $("speedLabel").textContent=speed+"s";
+  $("brightnessLabel").textContent=brightness+"%";
+  $("weightLabel").textContent=weight;
+
+  $("metricSpeed").textContent=speed+"s";
+  $("metricBrightness").textContent=brightness+"%";
+
+  $("targetOutput").textContent=data.target;
+  $("speedOutput").textContent=speed+"s";
+  $("weightOutput").textContent=weight;
+  $("messageOutput").textContent=data.message;
+  $("colorOutput").textContent=$("ledColor").selectedOptions[0].text.toUpperCase();
+
+  const color=data.color;
+
+  $("tickerTrack").replaceChildren();
+
+  for(let i=0;i<2;i++) {
+    const span=document.createElement("span");
+    span.textContent=data.message;
+    $("tickerTrack").appendChild(span);
+  }
+
+  $("tickerTrack").style.animationDuration =
+    Math.max(1,36-speed)+"s";
+
+  $("tickerTrack").style.fontWeight=weight;
+  $("tickerTrack").style.color=color;
+  $("tickerTrack").style.filter=`brightness(${brightness/100})`;
+
+  $("tickerClock").style.color=color;
+  $("tickerClock").style.fontWeight=weight;
+  $("tickerClock").style.filter=`brightness(${brightness/100})`;
+
+  $("tickerTrack").querySelectorAll("span").forEach(span=>{
+    span.style.color=color;
+  });
+
+  $("brightnessLabel").style.color=color;
+  $("speedLabel").style.color=color;
+  $("weightLabel").style.color=color;
+
+  $("colorOutput").style.color=color;
+
+  document.documentElement.style.setProperty("--cyan",color);
+}
+
+function saveSettings() {
+  const data=getSettings();
+  localStorage.setItem("nexusSettings",JSON.stringify(data));
+}
+
+$("settingsForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  updateSettings();
+  saveSettings();
+
+  alert("Pengaturan berhasil disimpan!");
+});
+
+$("resetBtn").addEventListener("click",()=>{
+  applySettings(defaults);
+  localStorage.removeItem("nexusSettings");
+});
+
+["speed","brightness","weight","ledColor","message","targetTime","timezone"]
+.forEach(id=>{
+  $(id).addEventListener("input",updateSettings);
+  $(id).addEventListener("change",updateSettings);
+});
+
+$("timezone").addEventListener("change",updateClock);
+
+function updateDemoSensors() {
+  // Data simulasi untuk tampilan demo.
+  const temp=(24+Math.random()*2).toFixed(1);
+  const humidity=Math.round(55+Math.random()*8);
+
+  $("temperature").textContent=temp+" °C";
+  $("humidity").textContent=humidity+" %";
+}
+
+function setLogin(status) {
+  loggedIn=status;
+  $("authOverlay").classList.toggle("hidden",status);
+  $("mainContent").classList.toggle("locked",!status);
+  $("logoutBtn").style.display=status?"block":"none";
+}
+
+$("authForm").addEventListener("submit",event=>{
+  event.preventDefault();
+
+  const username=$("username").value.trim();
+  const password=$("password").value;
+
+  if(username==="admin" && password==="admin123") {
+    $("authError").textContent="";
+    $("authForm").reset();
+    setLogin(true);
+  } else {
+    $("authError").textContent="Username atau password salah!";
+    $("password").value="";
+  }
+});
+
+$("logoutBtn").addEventListener("click",()=>{
+  setLogin(false);
+});
+
+document.querySelectorAll(".nav a").forEach(link=>{
+  link.addEventListener("click",()=>{
+    document.querySelectorAll(".nav a").forEach(a=>{
+      a.classList.remove("active");
+    });
+    link.classList.add("active");
+  });
+});
+
+// INITIALIZATION
+
+const saved=localStorage.getItem("nexusSettings");
+
+if(saved) {
+  try {
+    applySettings({...defaults,...JSON.parse(saved)});
+  } catch(error) {
+    applySettings(defaults);
+  }
+} else {
+  applySettings(defaults);
+}
+
+setLogin(false);
+updateClock();
+updateDemoSensors();
+
+setInterval(updateClock,1000);
+setInterval(updateDemoSensors,10000);
+</script>
+
+</body>
+</html>
